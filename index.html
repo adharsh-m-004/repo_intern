@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>VocalLink Control Panel</title>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #0f172a; color: white; display: flex; justify-content: center; padding-top: 50px; }
+        .container { background: #1e293b; padding: 2rem; border-radius: 12px; shadow: 0 10px 15px -3px rgba(0,0,0,0.1); width: 400px; border: 1px solid #334155; }
+        .btn { width: 100%; padding: 12px; margin: 8px 0; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .btn-blue { background: #3b82f6; color: white; }
+        .btn-red { background: #ef4444; color: white; margin-top: 20px; }
+        .status-box { background: #0f172a; padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 4px solid #3b82f6; }
+        .metric { color: #4ade80; font-family: monospace; font-size: 1.1rem; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2 style="margin-top:0">VocalLink UDP</h2>
+    
+    <div id="setup-view">
+        <button class="btn btn-blue" onclick="runNode('sender')">Start Sender (Node A)</button>
+        <button class="btn btn-blue" onclick="runNode('receiver')">Start Receiver (Node B)</button>
+    </div>
+
+    <div id="active-view" style="display:none">
+        <div class="status-box">
+            <p style="margin:0; font-size:0.8rem; color:#94a3b8;">LIVE METRICS</p>
+            <p>Seq: <span id="seq" class="metric">0</span></p>
+            <p id="delay-row">Latency: <span id="delay" class="metric">0</span> ms</p>
+        </div>
+        <button class="btn btn-red" onclick="stopNode()">Stop Node</button>
+    </div>
+</div>
+
+<script>
+    const socket = io('http://localhost:5000');
+    
+    function runNode(mode) {
+        document.getElementById('setup-view').style.display = 'none';
+        document.getElementById('active-view').style.display = 'block';
+        document.getElementById('delay-row').style.visibility = (mode === 'sender' ? 'hidden' : 'visible');
+        socket.emit('start-node', mode);
+    }
+
+    function stopNode() {
+        document.getElementById('setup-view').style.display = 'block';
+        document.getElementById('active-view').style.display = 'none';
+        socket.emit('stop-node');
+    }
+
+    socket.on('node-data', (data) => {
+        if(data.seq) document.getElementById('seq').innerText = data.seq;
+        if(data.delay !== undefined) document.getElementById('delay').innerText = data.delay;
+    });
+</script>
+
+</body>
+</html>
