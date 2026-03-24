@@ -73,11 +73,6 @@ repo_intern/
 Open two separate terminals/command prompts:
 
 ```bash
-# Terminal 1 - Start Receiver (Node B) first
-./NodeB.exe
-
-# Terminal 2 - Start Sender (Node A)
-./NodeA.exe
 
 npm install
 node server.js
