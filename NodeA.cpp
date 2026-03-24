@@ -10,7 +10,7 @@ int main() {
     Pa_OpenDefaultStream(&stream, NUM_CHANNELS, 0, paFloat32, SAMPLE_RATE, FRAMES_PER_BUFFER, nullptr, nullptr);
     Pa_StartStream(stream);
 
-    UDPSender sender("10.215.97.37", 8080); 
+    UDPSender sender("127.0.0.1", 8080); 
     AudioPacket packet;
     packet.sequenceNumber = 0;
 
